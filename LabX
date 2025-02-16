@@ -1,0 +1,64 @@
+import random
+x  = [54, -4, 404, 10, -950, 2]
+population = []
+mutation_rate = 0.05
+generations = 50
+for i in range(8):
+    temp = []
+    for j in range(6):
+        val = random.randint(-1000000, 1000000)
+        temp.append(val)
+    population.append(temp)
+
+
+def calculate_fitness(population, x):
+    fitness = []
+    for i in range(8):
+        temp = population[i]
+        print(x)
+        fit = 0
+        for j in range(6):
+            fit += temp[j] * x[j]
+        fitness.append(fit)
+    return fitness
+
+def selection(fitness, population):
+    fitness, population = zip(*sorted(zip(fitness, population), reverse=True))
+    return fitness, population
+
+def crossover(parent1, parent2):
+    pos = random.randint(0, len(parent1) - 1)
+    child1 = []
+    child2 = []
+    for i in range(pos):
+        child1.append(parent1[i])
+        child2.append(parent2[i])
+    for i in range(pos, len(parent1)):
+        child1.append(parent2[i])
+        child2.append(parent1[i])
+
+    return child1, child2
+
+def mutate_genes(child):
+    for i in range(len(child)):
+        if random.random() < mutation_rate:
+            child[i] = random.randint(-1000000, 1000000)
+
+    return child
+
+for z in range(generations):
+    fitness = calculate_fitness(population, x)
+    fitness, population = selection(fitness, population)
+    new_population = []
+    idx = 0
+    for i in range(2):
+        parent1 = population[idx]
+        parent2 = population[idx + 1]
+        child1, child2 = crossover(parent1, parent2)
+        child1 = mutate_genes(child1)
+        child2 = mutate_genes(child2)
+        new_population.extend([parent1, parent2, child1, child2])
+        idx += 2
+    population = new_population[:]
+    print(f'Generation: {z}:\nFitness:\n{fitness}\n\nPopulation:\n{population}\n\n')
+
